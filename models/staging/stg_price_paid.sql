@@ -1,6 +1,14 @@
 with source as (
 
+    {% if target.type == 'bigquery' %}
+    select
+        *,
+        concat('pp-', _TABLE_SUFFIX, '.csv') as source_file,
+        cast(null as timestamp) as loaded_at
+    from {{ source('land_registry', 'price_paid') }}
+    {% else %}
     select * from {{ source('land_registry', 'price_paid') }}
+    {% endif %}
 
 ),
 
@@ -30,6 +38,7 @@ deduplicated as (
 
     select *
     from cleaned
+    where true
     qualify row_number() over (
         partition by transaction_id
         order by loaded_at desc, source_file desc
@@ -43,9 +52,9 @@ final as (
         transaction_id,
         price,
         transfer_date,
-        cast(strftime(transfer_date, '%Y%m%d') as integer) as date_key,
+        {{ date_key('transfer_date') }} as date_key,
         postcode,
-        split_part(postcode, ' ', 1) as postcode_district,
+        {{ first_word('postcode') }} as postcode_district,
         nullif(regexp_extract(postcode, '^[A-Z]+'), '') as postcode_area,
         locality,
         town_city,

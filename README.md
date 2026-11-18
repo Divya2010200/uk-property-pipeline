@@ -64,16 +64,30 @@ docker compose up -d
 
 Open http://localhost:8080, then enable and run `uk_property_pipeline`.
 
+## Run it on BigQuery
+
+The same dbt models also run on BigQuery in the London region, using the free sandbox.
+
+```powershell
+.venv\Scripts\python -m pip install -r requirements-bigquery.txt
+gcloud.cmd auth application-default login
+.venv\Scripts\python -m pipeline.load_bigquery --year 2025
+.venv\Scripts\dbt build --target bigquery
+.venv\Scripts\python -m pipeline.verify_bigquery
+```
+
+Sandbox tables expire after 60 days, so the pipeline may need to be run again.
+
 ## Current limitations
 
 - Loads complete yearly files; monthly change and delete records are not applied yet
-- Runs locally on DuckDB and Docker
+- Airflow runs locally and currently targets DuckDB
 - Recent months may be incomplete because sales are registered after they happen
 
 ## Roadmap
 
 - Incremental monthly updates
-- Optional cloud warehouse target
+- Airflow-managed BigQuery runs
 
 ## Data source and licence
 

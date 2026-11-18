@@ -6,6 +6,7 @@ sources:
     description: HM Land Registry Price Paid Data, loaded unchanged as text.
     tables:
       - name: price_paid
+        identifier: "{{ 'price_paid_*' if target.type == 'bigquery' else 'price_paid' }}"
         columns:
           - name: transaction_id
             data_tests:

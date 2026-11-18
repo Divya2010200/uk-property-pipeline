@@ -1,4 +1,27 @@
-with bounds as (
+with
+
+{% if target.type == 'bigquery' %}
+
+bounds as (
+
+    select
+        date_trunc(min(transfer_date), year) as first_day,
+        date_sub(date_add(date_trunc(max(transfer_date), year), interval 1 year), interval 1 day) as last_day
+    from {{ ref('stg_price_paid') }}
+
+),
+
+days as (
+
+    select date_day
+    from bounds
+    cross join unnest(generate_date_array(first_day, last_day)) as date_day
+
+)
+
+{% else %}
+
+bounds as (
 
     select
         cast(date_trunc('year', min(transfer_date)) as timestamp) as first_day,
@@ -14,15 +37,17 @@ days as (
 
 )
 
+{% endif %}
+
 select
-    cast(strftime(date_day, '%Y%m%d') as integer) as date_key,
+    {{ date_key('date_day') }} as date_key,
     date_day,
-    year(date_day) as year,
-    quarter(date_day) as quarter,
-    month(date_day) as month,
-    monthname(date_day) as month_name,
-    cast(date_trunc('month', date_day) as date) as month_start,
-    isodow(date_day) as day_of_week,
-    dayname(date_day) as day_name,
-    isodow(date_day) in (6, 7) as is_weekend
+    extract(year from date_day) as year,
+    extract(quarter from date_day) as quarter,
+    extract(month from date_day) as month,
+    {{ month_name('date_day') }} as month_name,
+    {{ month_start('date_day') }} as month_start,
+    {{ iso_day_of_week('date_day') }} as day_of_week,
+    {{ day_name('date_day') }} as day_name,
+    {{ iso_day_of_week('date_day') }} in (6, 7) as is_weekend
 from days
