@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DUCKDB_PATH: data/ci.duckdb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Python tests
+        run: python -m pytest -q
+      - name: Load synthetic sample
+        run: python -m pipeline.load_sample "$DUCKDB_PATH"
+      - name: Build and test dbt models
+        run: dbt build
