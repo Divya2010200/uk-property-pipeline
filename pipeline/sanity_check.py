@@ -15,7 +15,9 @@ def main() -> None:
         ).fetchone()
         print(f"Raw:  {raw[0]:,} sales, GBP {raw[1]:,}")
         print(f"Fact: {fact[0]:,} sales, GBP {fact[1]:,}")
-        print("Totals match" if raw == fact else "TOTALS DO NOT MATCH")
+        if raw != fact:
+            raise SystemExit("TOTALS DO NOT MATCH")
+        print("Totals match")
 
         median_from_raw = connection.execute(
             """

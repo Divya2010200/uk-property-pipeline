@@ -7,6 +7,8 @@ For the 2025 file, it loads 992,278 property sales into a DuckDB warehouse and b
 ## Architecture
 
 ```
+Airflow schedules and retries the following steps:
+
 Land Registry CSV
       |
       v
@@ -47,15 +49,29 @@ python -m venv .venv
 .venv\Scripts\python -m pipeline.sanity_check
 ```
 
+## Run it with Airflow
+
+Docker Desktop is required.
+
+```powershell
+Invoke-WebRequest https://airflow.apache.org/docs/apache-airflow/3.4.0/docker-compose.yaml -OutFile docker-compose.yaml
+New-Item -ItemType Directory -Force dags, logs, plugins, config
+Set-Content .env "AIRFLOW_UID=50000", "AIRFLOW_IMAGE_NAME=uk-property-airflow:latest"
+docker build -t uk-property-airflow:latest .
+docker compose up airflow-init
+docker compose up -d
+```
+
+Open http://localhost:8080, then enable and run `uk_property_pipeline`.
+
 ## Current limitations
 
 - Loads complete yearly files; monthly change and delete records are not applied yet
-- Runs locally on DuckDB
+- Runs locally on DuckDB and Docker
 - Recent months may be incomplete because sales are registered after they happen
 
 ## Roadmap
 
-- Airflow orchestration
 - Incremental monthly updates
 - Optional cloud warehouse target
 

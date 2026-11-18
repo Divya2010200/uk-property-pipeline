@@ -8,3 +8,5 @@ logs/
 __pycache__/
 .env
 .user.yml
+config/
+plugins/

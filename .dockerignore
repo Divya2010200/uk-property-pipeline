@@ -1,0 +1,15 @@
+.git
+.github
+.venv
+.env
+.user.yml
+__pycache__
+data
+target
+dbt_packages
+logs
+config
+plugins
+dags
+docker-compose.yaml
+docker-compose.override.yaml

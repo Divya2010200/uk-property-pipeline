@@ -1,0 +1,11 @@
+services:
+  airflow-dag-processor:
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+
+  airflow-worker:
+    volumes:
+      - warehouse:/opt/project/data
+
+volumes:
+  warehouse:
