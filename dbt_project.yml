@@ -1,0 +1,16 @@
+name: uk_property
+version: "1.0.0"
+profile: uk_property
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["dbt_tests"]
+target-path: target
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  uk_property:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

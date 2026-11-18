@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: land_registry
+    schema: raw
+    description: HM Land Registry Price Paid Data, loaded unchanged as text.
+    tables:
+      - name: price_paid
+        columns:
+          - name: transaction_id
+            data_tests:
+              - not_null

@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: One row per calendar day.
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_location
+    description: One row per distinct sale location.
+    columns:
+      - name: location_key
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_property
+    description: One row per combination of property attributes.
+    columns:
+      - name: property_key
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fct_sales
+    description: One row per property sale.
+    columns:
+      - name: transaction_id
+        data_tests:
+          - not_null
+          - unique
+      - name: price
+        data_tests:
+          - not_null
+          - positive_value
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: location_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_key
+      - name: property_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_property')
+                field: property_key
+
+  - name: mart_monthly_district_prices
+    description: Monthly standard-sale prices by county and district.
+    columns:
+      - name: sales_count
+        data_tests:
+          - not_null
+          - positive_value
+      - name: median_price
+        data_tests:
+          - not_null
+          - positive_value

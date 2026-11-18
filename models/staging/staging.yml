@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: stg_price_paid
+    description: One typed and cleaned row per property sale.
+    columns:
+      - name: transaction_id
+        data_tests:
+          - not_null
+          - unique
+      - name: price
+        data_tests:
+          - not_null
+          - positive_value
+      - name: transfer_date
+        data_tests:
+          - not_null
+      - name: property_type_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["D", "S", "T", "F", "O"]
+      - name: old_new_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Y", "N"]
+      - name: duration_code
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["F", "L", "U"]
+      - name: ppd_category
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["A", "B"]
+      - name: record_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["A", "C", "D"]
